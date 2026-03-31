@@ -3,7 +3,7 @@ package ru.yandex.practicum;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
 
 /*
@@ -12,7 +12,7 @@ import java.util.List;
     на выходе должен быть класс WordleDictionary
  */
 public class WordleDictionaryLoader {
-    public List<String> readingFile(String nameFile) throws IOException {
-        return Files.readAllLines(Paths.get(nameFile), StandardCharsets.UTF_8);
+    public List<String> readingFile(Path nameFile) throws IOException {
+        return Files.readAllLines(nameFile, StandardCharsets.UTF_8);
     }
 }
