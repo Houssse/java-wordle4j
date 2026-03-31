@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +14,7 @@ public class WordleDictionaryTest {
 
     @BeforeEach
     void setUp(){
-        List<String> words = List.of("Аббат", "Банка", "Волок",
+        Set<String> words = Set.of("Аббат", "Банка", "Волок",
                 "Бич", "Сир", "чётки",
                 "Апатия", "Букетик");
         dictionary = new WordleDictionary();
@@ -22,7 +23,7 @@ public class WordleDictionaryTest {
 
     @Test
     void testGetWordsFiltersCorrectly() {
-        List<String> result = dictionary.getWords();
+        Set<String> result = dictionary.getWords();
 
         for (String word : result) {
             assertEquals(5, word.length(), "Ошибка сортировки: Слово " + word +
