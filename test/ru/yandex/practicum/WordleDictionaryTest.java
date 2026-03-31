@@ -41,6 +41,17 @@ public class WordleDictionaryTest {
         String word = dictionary.getWord();
 
         assertNotNull(word);
-        assertEquals(1, word.split(" ").length, "Вернулось несколько слов ожидалось одно");
+        assertEquals(5, word.length(), "Ожидалось слово длинной 5 букв" + word);
+    }
+
+    @Test
+    void testCheckAvailability() {
+        WordleDictionary dict = new WordleDictionary();
+        dict.setWords(Set.of("кот", "ежик", "дом"));
+
+        assertTrue(dict.CheckAvailability("ежик"));
+        assertTrue(dict.CheckAvailability("ёжик"));  // замена ё на е
+        assertTrue(dict.CheckAvailability("ЕЖИК"));  // нижний регистр
+        assertFalse(dict.CheckAvailability("слон"));
     }
 }

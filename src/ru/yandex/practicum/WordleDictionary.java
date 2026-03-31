@@ -32,6 +32,7 @@ public class WordleDictionary {
     }
 
     public boolean CheckAvailability(String guess) {
-        return  words.contains(guess.toLowerCase().replace('ё', 'е'));
+        Set<String> filtered = getWords();
+        return filtered.contains(guess.toLowerCase().replace('ё', 'е'));
     }
 }
