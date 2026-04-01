@@ -35,13 +35,21 @@ public class WordleGame {
         return steps;
     }
 
+    public String getAnswer(){
+        return answer;
+    }
+
     public void setAnswer(String answer) {
         this.answer = answer;
     }
 
     public String processGuess(String guess) {
-        if (!dictionary.CheckAvailability(guess)) {
-            throw new IllegalArgumentException("Слово не найдено в словаре");
+        if (guess.length() != 5) {
+            throw new IllegalArgumentException("Неверной длинный слово. Должно быть 5 букв");
+        } else {
+            if (!dictionary.CheckAvailability(guess)) {
+                throw new IllegalArgumentException("Слово не найдено в словаре");
+            }
         }
 
         StringBuilder currentResult = new StringBuilder(5);
