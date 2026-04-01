@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +32,10 @@ public class WordleDictionaryLoaderTest {
 
     @Test
     void testReadingFileReturnsCorrectWords() throws IOException {
-        WordleDictionaryLoader loader = new WordleDictionaryLoader();
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter log = new PrintWriter(stringWriter);
+
+        WordleDictionaryLoader loader = new WordleDictionaryLoader(log);
         List<String> result = loader.readingFile(testFile);
 
         assertEquals(testWords, result, "Ошибка чтения/кодировки файла");

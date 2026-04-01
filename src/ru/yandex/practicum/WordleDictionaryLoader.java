@@ -1,18 +1,26 @@
 package ru.yandex.practicum;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-/*
-этот класс содержит в себе всю рутину по работе с файлами словарей и с кодировками
-    ему нужны методы по загрузке списка слов из файла по имени файла
-    на выходе должен быть класс WordleDictionary
- */
 public class WordleDictionaryLoader {
+    private PrintWriter log;
+
+    public WordleDictionaryLoader(PrintWriter log) {
+        this.log = log;
+    }
+
     public List<String> readingFile(Path nameFile) throws IOException {
-        return Files.readAllLines(nameFile, StandardCharsets.UTF_8);
+        try {
+            log.println("Загрузка словаря из: " + nameFile);
+            return Files.readAllLines(nameFile, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.println("Ошибка загрузки словаря: " + e.getMessage());
+            throw e;
+        }
     }
 }

@@ -3,6 +3,8 @@ package ru.yandex.practicum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
@@ -13,11 +15,12 @@ public class WordleDictionaryTest {
     private WordleDictionary dictionary;  // <-- добавить это
 
     @BeforeEach
-    void setUp(){
-        Set<String> words = Set.of("Аббат", "Банка", "Волок",
-                "Бич", "Сир", "чётки",
-                "Апатия", "Букетик");
-        dictionary = new WordleDictionary();
+    void setUp() {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter log = new PrintWriter(stringWriter);
+
+        Set<String> words = Set.of("Аббат", "Банка", "Волок", "Бич", "Сир", "чётки", "Апатия", "Букетик");
+        dictionary = new WordleDictionary(log);
         dictionary.setWords(words);
     }
 
@@ -46,12 +49,15 @@ public class WordleDictionaryTest {
 
     @Test
     void testCheckAvailability() {
-        WordleDictionary dict = new WordleDictionary();
-        dict.setWords(Set.of("кот", "ежик", "дом"));
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter log = new PrintWriter(stringWriter);
 
-        assertTrue(dict.CheckAvailability("ежик"));
-        assertTrue(dict.CheckAvailability("ёжик"));  // замена ё на е
-        assertTrue(dict.CheckAvailability("ЕЖИК"));  // нижний регистр
-        assertFalse(dict.CheckAvailability("слон"));
+        WordleDictionary dict = new WordleDictionary(log);
+        dict.setWords(Set.of("кот", "ежики", "дом"));
+
+        assertTrue(dict.checkAvailability("ежики"));
+        assertTrue(dict.checkAvailability("ёжики"));  // замена ё на е
+        assertTrue(dict.checkAvailability("ЕЖИКИ"));  // нижний регистр
+        assertFalse(dict.checkAvailability("слоны"));
     }
 }
