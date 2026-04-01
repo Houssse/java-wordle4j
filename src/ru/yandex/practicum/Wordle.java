@@ -27,13 +27,15 @@ public class Wordle {
 
                 while (true) {
                     System.out.println("У вас " + game.getSteps() + " попыток");
-                    System.out.print("Введите слово (или Enter для подсказки): ");
+                    System.out.print("Введите слово (или Enter для подсказки): или Q для выхода ");
 
                     String guess = scanner.nextLine();
 
                     if (guess.isEmpty()) {
                         System.out.println("Подсказка: " + game.getHint());
                         continue;
+                    } else if (guess.equals("Q")) {
+                        break;
                     }
 
                     try {
