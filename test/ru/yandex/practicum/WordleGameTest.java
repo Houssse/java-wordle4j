@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WordleGameTest {
     @Test
@@ -23,5 +23,22 @@ public class WordleGameTest {
         assertEquals("+++++", game.processGuess("абвгд"));
         assertEquals("^-+-^", game.processGuess("бевса"));
         assertEquals("-----", game.processGuess("иииии"));
+    }
+
+    @Test
+    void testGetHint() {
+        StringWriter sw = new StringWriter();
+        PrintWriter log = new PrintWriter(sw);
+
+        WordleDictionary dict = new WordleDictionary(log);
+        dict.setWords(Set.of("абвгд", "гдежз"));
+
+        WordleGame game = new WordleGame(dict, log);
+        game.setAnswer("абвгд");
+
+        String hintWithResult = game.getHint();
+
+        assertTrue(hintWithResult.contains("->"));
+        assertTrue(hintWithResult.length() >= 5);
     }
 }

@@ -56,4 +56,21 @@ public class WordleGame {
         steps--;
         return currentResult.toString();
     }
+
+    public String getHint(){
+        String hint = dictionary.getWord();
+
+        StringBuilder result = new StringBuilder(5);
+        for (int i = 0; i < 5; i++) {
+            if (hint.charAt(i) == answer.charAt(i)) {
+                result.append("+");
+            } else if (answer.contains(String.valueOf(hint.charAt(i)))) {
+                result.append("^");
+            } else {
+                result.append("-");
+            }
+        }
+
+        return hint + " -> " + result;
+    }
 }

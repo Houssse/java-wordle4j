@@ -27,9 +27,14 @@ public class Wordle {
 
                 while (true) {
                     System.out.println("У вас " + game.getSteps() + " попыток");
-                    System.out.print("Введите слово: ");
+                    System.out.print("Введите слово (или Enter для подсказки): ");
 
                     String guess = scanner.nextLine();
+
+                    if (guess.isEmpty()) {
+                        System.out.println("Подсказка: " + game.getHint());
+                        continue;
+                    }
 
                     try {
                         String result = game.processGuess(guess);
