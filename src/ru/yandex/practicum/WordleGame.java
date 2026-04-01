@@ -57,7 +57,7 @@ public class WordleGame {
         return currentResult.toString();
     }
 
-    public String getHint(){
+    public String getHint() {
         String hint = dictionary.getWord();
 
         StringBuilder result = new StringBuilder(5);

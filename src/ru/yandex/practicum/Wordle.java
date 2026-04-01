@@ -34,7 +34,7 @@ public class Wordle {
                     if (guess.isEmpty()) {
                         System.out.println("Подсказка: " + game.getHint());
                         continue;
-                    } else if (guess.equals("Q")) {
+                    } else if (guess.equals("Q") || words.equals("q")) {
                         break;
                     }
 

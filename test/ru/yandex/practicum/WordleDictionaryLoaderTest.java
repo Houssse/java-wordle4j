@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WordleDictionaryLoaderTest {
     private static Path testFile;
-    private  static final List<String> testWords = List.of("Книг", "Дом", "Достопримечательность");
+    private static final List<String> testWords = List.of("Книг", "Дом", "Достопримечательность");
 
 
     @BeforeAll
