@@ -16,7 +16,8 @@ public class WordleDictionary {
     }
 
     public String getWord() {
-        List<String> wordList = new ArrayList<>(words);
+        Set<String> filtered = getWords();
+        List<String> wordList = new ArrayList<>(filtered);
         Random random = new Random();
         return wordList.get(random.nextInt(wordList.size()));
     }
