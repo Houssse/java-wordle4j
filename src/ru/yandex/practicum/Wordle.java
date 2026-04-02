@@ -34,7 +34,7 @@ public class Wordle {
                     if (guess.isEmpty()) {
                         System.out.println("Подсказка: " + game.getHint());
                         continue;
-                    } else if (guess.equals("Q") || words.equals("q")) {
+                    } else if (guess.equalsIgnoreCase("Q")) {
                         break;
                     }
 
@@ -42,7 +42,7 @@ public class Wordle {
                         String result = game.processGuess(guess);
                         System.out.println(result);
 
-                        if (result.equals("+++++")) {
+                        if (game.isWin()) {
                             System.out.println("Победа! Верное слово: " + guess);
                             log.println("Победа! Слово: " + guess);
                             break;
