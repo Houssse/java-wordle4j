@@ -17,7 +17,7 @@ public class Wordle {
         Scanner input = new Scanner(System.in);
         WordleGame game = new WordleGame();
 
-        System.out.println("Я загадал слово из 5 у вас 5 ходов");
+        System.out.println("Я загадал слово из 5 у вас 6 ходов");
 
         while (!game.isFished()) {
             System.out.println("ход  " + (game.getSteps() + 1));

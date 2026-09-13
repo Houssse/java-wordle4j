@@ -1,5 +1,7 @@
 package ru.yandex.practicum;
 
+import java.util.LinkedHashMap;
+
 /*
 в этом классе хранится словарь и состояние игры
     текущий шаг
@@ -49,10 +51,11 @@ public class WordleGame {
                     return "Верно это " + answer;
                 } else {
                     steps++;
-                    if (steps == 5) {
+                    if (steps == 6) {
                         fished = true;
                         return "у вас закончились ходы. Ответ был " + answer;
                     }
+
                     return this.toChar(input);
                 }
             }
