@@ -17,7 +17,7 @@ public class WordleDictionaryLoader {
     private static final String NAME_FILE = "words_ru.txt";
     private static final int WORLD_LENGTH = 5;
 
-    public WordleDictionary loadDictionary() {
+    public static WordleDictionary loadDictionary() {
         List<String> words = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(
