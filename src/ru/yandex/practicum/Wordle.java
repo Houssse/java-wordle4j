@@ -17,14 +17,15 @@ public class Wordle {
         Scanner input = new Scanner(System.in);
         WordleGame game = new WordleGame();
 
-        System.out.println("Я загадал слово из 5 у вас 6 ходов");
+        System.out.println("Я загадал слово из 5 букв у вас 6 ходов");
 
-        while (!game.isFished()) {
-            System.out.println("ход  " + (game.getSteps() + 1));
-            System.out.print("-> ");
+        while (!game.isFinished()) {
             String answer = input.nextLine();
-            System.out.print("-> ");
-            System.out.println(game.checkAnswer(answer));
+            try {
+                System.out.println(game.checkAnswer(answer));
+            } catch (WordleGameException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 

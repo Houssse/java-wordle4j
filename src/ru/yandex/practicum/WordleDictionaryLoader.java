@@ -24,13 +24,13 @@ public class WordleDictionaryLoader {
                 new InputStreamReader(new FileInputStream(NAME_FILE), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.length() == WORLD_LENGTH){
-                    words.add(line.toLowerCase().replace("ё", "е"));
+                line = line.trim().toLowerCase().replace("ё", "е");
+                if (line.length() == WORLD_LENGTH) {
+                    words.add(line);
                 }
             }
         } catch (IOException e) {
-            System.out.println("Ошибка чтения файла.");
+            throw new WordleGameException("Ошибка чтения файла: " + e.getMessage());
         }
 
         return new WordleDictionary(words);

@@ -1,7 +1,5 @@
 package ru.yandex.practicum;
 
-import java.util.LinkedHashMap;
-
 /*
 в этом классе хранится словарь и состояние игры
     текущий шаг
@@ -22,18 +20,18 @@ public class WordleGame {
 
     private WordleDictionary dictionary;
 
-    private boolean fished;
+    private boolean finished;
 
     public WordleGame() {
         this.steps = 0;
         this.dictionary = WordleDictionaryLoader.loadDictionary();
         this.answer = dictionary.randomWord();
-        this.fished = false;
+        this.finished = false;
 
     }
 
-    public boolean isFished() {
-        return fished;
+    public boolean isFinished() {
+        return finished;
     }
 
     public int getSteps() {
@@ -41,27 +39,28 @@ public class WordleGame {
     }
 
     public String checkAnswer(String input) {
-        if (input.length() == 5) {
-            if (input.isEmpty() || input.isBlank()) {
-                return "Вы не ввели слово";
-            } else {
-                input = input.toLowerCase().trim().replace("ё", "е");
-                if (input.equals(answer)) {
-                    fished = true;
-                    return "Верно это " + answer;
-                } else {
-                    steps++;
-                    if (steps == 6) {
-                        fished = true;
-                        return "у вас закончились ходы. Ответ был " + answer;
-                    }
-
-                    return this.toChar(input);
-                }
-            }
-        } else {
-            return "Слово должно состоять из 5 букв";
+        if (input == null || input.isBlank()) {
+            throw new WordleGameException("Вы не ввели слово");
         }
+
+        input = input.toLowerCase().trim().replace("ё", "е");
+
+        if (input.length() != 5) {
+            throw new WordleGameException("Слово должно состоять из 5 букв");
+        }
+
+        if (input.equals(answer)) {
+            finished = true;
+            return "Верно, это " + answer;
+        }
+
+        steps++;
+        if (steps == 6) {
+            finished = true;
+            return "У вас закончились ходы. Ответ был " + answer;
+        }
+
+        return toChar(input);
     }
 
     private String toChar(String input) {
