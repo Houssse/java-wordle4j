@@ -1,80 +1,81 @@
 package ru.yandex.practicum;
 
-/*
-в этом классе хранится словарь и состояние игры
-    текущий шаг
-    всё что пользователь вводил
-    правильный ответ
+import java.util.ArrayList;
+import java.util.List;
 
-в этом классе нужны методы, которые
-    проанализируют совпадение слова с ответом
-    предложат слово-подсказку с учётом всего, что вводил пользователь ранее
-
-не забудьте про специальные типы исключений для игровых и неигровых ошибок
- */
 public class WordleGame {
 
-    private String answer;
+    private static final int MAX_STEPS = 6;
+    private static final int WORD_LENGTH = 5;
 
+    private final String answer;
     private int steps;
-
-    private WordleDictionary dictionary;
-
+    private final WordleDictionary dictionary;
     private boolean finished;
+    private final List<ExceptionWords> exceptionWordsList;
 
     public WordleGame() {
         this.steps = 0;
         this.dictionary = WordleDictionaryLoader.loadDictionary();
         this.answer = dictionary.randomWord();
         this.finished = false;
-
+        this.exceptionWordsList = new ArrayList<>();
     }
 
     public boolean isFinished() {
         return finished;
     }
 
+    public String getAnswer() {
+        return answer;
+    }
+
     public int getSteps() {
         return steps;
     }
 
-    public String checkAnswer(String input) {
-        if (input == null || input.isBlank()) {
-            throw new WordleGameException("Вы не ввели слово");
-        }
+    public List<ExceptionWords> getExceptionWordsList() {
+        return exceptionWordsList;
+    }
 
+    public String checkAnswer(String input) {
         input = input.toLowerCase().trim().replace("ё", "е");
 
-        if (input.length() != 5) {
+        if (input.length() != WORD_LENGTH) {
             throw new WordleGameException("Слово должно состоять из 5 букв");
         }
+
+        steps++;
+        ExceptionWords exceptionWord = new ExceptionWords(input, answer);
+        exceptionWordsList.add(exceptionWord);
+        dictionary.filterDictionary(exceptionWord);
 
         if (input.equals(answer)) {
             finished = true;
             return "Верно, это " + answer;
         }
 
-        steps++;
-        if (steps == 6) {
+        if (steps == MAX_STEPS) {
             finished = true;
             return "У вас закончились ходы. Ответ был " + answer;
         }
 
-        return toChar(input);
+        return toChar(exceptionWord.getWord());
     }
 
-    private String toChar(String input) {
+    public String giveHint() {
+        return dictionary.randomWord();
+    }
+
+    public String toChar(String word) {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) == answer.charAt(i)) {
-                // буква на своём месте
+        for (int i = 0; i < word.length(); i++) {
+            if (word.charAt(i) == answer.charAt(i)) {
                 sb.append("+");
-            } else if (answer.indexOf(input.charAt(i)) != -1) {
-                // буква есть в слове, но не на этом месте
+            } else if (answer.indexOf(word.charAt(i)) != -1) {
                 sb.append("^");
             } else {
-                // буквы нет
                 sb.append("-");
             }
         }

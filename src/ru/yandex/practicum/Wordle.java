@@ -2,31 +2,32 @@ package ru.yandex.practicum;
 
 import java.util.Scanner;
 
-/*
-в главном классе нам нужно:
-    создать лог-файл (он должен передаваться во все классы)
-    создать загрузчик словарей WordleDictionaryLoader
-    загрузить словарь WordleDictionary с помощью класса WordleDictionaryLoader
-    затем создать игру WordleGame и передать ей словарь
-    вызвать игровой метод в котором в цикле опрашивать пользователя и передавать информацию в игру
-    вывести состояние игры и конечный результат
- */
 public class Wordle {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         WordleGame game = new WordleGame();
 
-        System.out.println("Я загадал слово из 5 букв у вас 6 ходов");
+        System.out.println("Я загадал слово из 5 букв, у вас 6 ходов");
 
         while (!game.isFinished()) {
+            System.out.println("Ход " + (game.getSteps() + 1));
+            System.out.print("-> ");
             String answer = input.nextLine();
+
             try {
-                System.out.println(game.checkAnswer(answer));
+                if (answer.isBlank()) {
+                    String hint = game.giveHint();
+                    System.out.println("Подсказка: " + hint);
+                    System.out.println(game.checkAnswer(hint));
+                } else {
+                    System.out.println(game.checkAnswer(answer));
+                }
             } catch (WordleGameException e) {
                 System.out.println(e.getMessage());
             }
         }
-    }
 
+        System.out.println("Игра окончена!");
+    }
 }
