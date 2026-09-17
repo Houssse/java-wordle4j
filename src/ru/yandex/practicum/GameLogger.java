@@ -3,6 +3,8 @@ package ru.yandex.practicum;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,14 @@ public class GameLogger {
             logs.clear();
         } catch (IOException e) {
             System.out.println("Ошибка записи лога: " + e.getMessage());
+        }
+    }
+
+    public void deleteLogFile() {
+        try {
+            Files.deleteIfExists(Paths.get(fileName));
+        } catch (IOException e) {
+            System.out.println("Ошибка удаления лог-файла: " + e.getMessage());
         }
     }
 }

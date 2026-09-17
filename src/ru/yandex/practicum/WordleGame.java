@@ -25,6 +25,15 @@ public class WordleGame {
         logger.info("Игра началась, загадано слово из " + WORD_LENGTH + " букв");
     }
 
+    public WordleGame(GameLogger logger, WordleDictionary dictionary, String answer) {
+        this.logger = logger;
+        this.dictionary = dictionary;
+        this.answer = answer;
+        this.steps = 0;
+        this.finished = false;
+        this.exceptionWordsList = new ArrayList<>();
+    }
+
     public boolean isFinished() {
         return finished;
     }
