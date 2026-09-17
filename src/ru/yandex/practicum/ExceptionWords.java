@@ -20,13 +20,10 @@ public class ExceptionWords {
             char c = word.charAt(i);
 
             if (answer.charAt(i) == c) {
-                // буква на своём месте
                 addPosition(charPosition, c, i);
             } else if (answer.indexOf(c) == -1) {
-                // буквы нет в ответе
                 chars.append(c);
             } else {
-                // буква есть, но не на своём месте
                 addPosition(misplacements, c, i);
             }
         }
