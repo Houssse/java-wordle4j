@@ -1,7 +1,11 @@
 package ru.yandex.practicum;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.exception.InvalidWordLengthException;
+import ru.yandex.practicum.exception.WordNotFoundInDictionary;
+import ru.yandex.practicum.exception.WordleGameException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,85 +13,142 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class WordleGameTest {
-    private WordleGame game;
+
+    private static final String LOG_FILE = "test_game_log.txt";
     private GameLogger logger;
 
     @BeforeEach
     void setUp() {
-        logger = new GameLogger("test_log.txt");
-        WordleDictionary dict = new WordleDictionary(new ArrayList<>(List.of("котик", "книга", "мышка")));
-        game = new WordleGame(logger, dict, "котик");
+        logger = new GameLogger(LOG_FILE);
+    }
+
+    @AfterEach
+    void tearDown() {
+        logger.deleteLogFile();
+    }
+
+    private WordleGame newGame(String answer, String... words) {
+        WordleDictionary dict = new WordleDictionary(new ArrayList<>(List.of(words)), logger);
+        return new WordleGame(dict, answer, logger);
     }
 
     @Test
-    void checkAnswer_correctWord_finishesGame() {
-        String result = game.checkAnswer("котик");
+    void makeMove_correctWord_finishesGame() {
+        WordleGame game = newGame("банан", "банан", "котик", "книга", "мышка");
+
+        String result = game.makeMove("банан");
 
         assertTrue(game.isFinished());
-        assertTrue(result.contains("котик"));
+        assertTrue(result.contains("банан"));
     }
 
     @Test
-    void checkAnswer_wrongLength_throwsException() {
-        assertThrows(WordleGameException.class, () -> game.checkAnswer("кот"));
+    void makeMove_wrongLength_throws() {
+        WordleGame game = newGame("банан", "банан", "котик");
+
+        assertThrows(InvalidWordLengthException.class, () -> game.makeMove("кот"));
     }
 
     @Test
-    void checkAnswer_wrongWord_returnsMask() {
-        String result = game.checkAnswer("книга");
+    void makeMove_wordNotInDictionary_throws() {
+        WordleGame game = newGame("банан", "банан", "котик");
 
-        assertEquals("+-^--", result);
-        assertFalse(game.isFinished());
+        assertThrows(WordNotFoundInDictionary.class, () -> game.makeMove("абвгд"));
     }
 
     @Test
-    void checkAnswer_sixWrongAttempts_finishesGame() {
-        for (int i = 0; i < 6; i++) {
-            try {
-                game.checkAnswer("абвгд");
-            } catch (WordleGameException ignored) {
-            }
-        }
+    void makeMove_duplicateLetters_maskIsCorrect() {
+        WordleGame game = newGame("банан", "банан", "котик");
+
+        assertEquals("-+-+-", game.toChar("ааааа"));
+    }
+
+    @Test
+    void makeMove_normalizesInput() {
+        WordleGame game = newGame("банан", "банан", "котик");
+
+        String result = game.makeMove("БАНАН");
 
         assertTrue(game.isFinished());
+        assertTrue(result.contains("банан"));
     }
 
     @Test
-    void checkAnswer_normalizesInput() {
-        String result = game.checkAnswer("КОТИК");
+    void makeMove_yoReplacedWithE() {
+        WordleGame game = newGame("ежика", "ежика", "банан");
+
+        String result = game.makeMove("ёжика");
 
         assertTrue(game.isFinished());
-        assertTrue(result.contains("котик"));
+        assertTrue(result.contains("ежика"));
     }
 
     @Test
-    void checkAnswer_yoReplacedWithE() {
-        WordleDictionary dict = new WordleDictionary(new ArrayList<>(List.of("ёжика")));
-        WordleGame g = new WordleGame(logger, dict, "ежика");
+    void makeMove_repeatedInput_throws() {
+        WordleGame game = newGame("банан", "банан", "котик", "книга");
 
-        String result = g.checkAnswer("ёжика");
+        game.makeMove("котик");
 
-        assertTrue(g.isFinished());
+        WordleGameException e = assertThrows(WordleGameException.class,
+                () -> game.makeMove("котик"));
+
+        assertTrue(e.getMessage().contains("уже вводили"),
+                "Ожидалось сообщение о повторе, а получили: " + e.getMessage());
     }
 
     @Test
-    void toChar_correctMask() {
-        String mask = game.toChar("книга");
+    void makeMove_afterFinish_throws() {
+        WordleGame game = newGame("банан", "банан", "котик");
 
-        assertEquals("+-^--", mask);
+        game.makeMove("банан");
+
+        assertThrows(WordleGameException.class, () -> game.makeMove("котик"));
     }
 
     @Test
-    void getSteps_increasesAfterEachAttempt() {
-        try {
-            game.checkAnswer("книга");
-        } catch (WordleGameException ignored) {
-        }
-        try {
-            game.checkAnswer("мышка");
-        } catch (WordleGameException ignored) {
-        }
+    void steps_increaseAfterEachMove() {
+        WordleGame game = newGame("банан",
+                "банан", "батон", "барин", "какао", "мама");
+
+        game.makeMove("батон");
+        game.makeMove("барин");
 
         assertEquals(2, game.getSteps());
+    }
+
+    @Test
+    void sixWrongAttempts_finishesGame() {
+
+        WordleGame game = newGame("банан",
+                "банан", "ванан", "ганан", "данан", "жанан", "занан", "канан");
+
+        String[] guesses = {"ванан", "ганан", "данан", "жанан", "занан", "канан"};
+        for (String guess : guesses) {
+            if (game.isFinished()) break;
+            game.makeMove(guess);
+        }
+
+        assertTrue(game.isFinished(), "Игра должна завершиться после 6 ходов");
+        assertEquals(6, game.getSteps());
+    }
+
+    @Test
+    void hint_isNotAMove() {
+        WordleGame game = newGame("банан", "банан", "котик", "книга");
+
+        int before = game.getSteps();
+        game.giveHint();
+
+        assertEquals(before, game.getSteps());
+    }
+
+    @Test
+    void hint_doesNotRepeat() {
+        WordleGame game = newGame("банан", "банан", "котик", "книга", "мышка");
+
+        String h1 = game.giveHint();
+        String h2 = game.giveHint();
+
+        assertNotEquals(h1, h2);
     }
 }

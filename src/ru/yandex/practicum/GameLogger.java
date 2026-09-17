@@ -2,45 +2,53 @@ package ru.yandex.practicum;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameLogger {
+
     private final String fileName;
-    private final List<String> logs = new ArrayList<>();
+    private final PrintWriter writer;
 
     public GameLogger(String fileName) {
         this.fileName = fileName;
-    }
-
-    public void info(String message) {
-        logs.add("[" + LocalDateTime.now() + "] [INFO] " + message);
-    }
-
-    public void error(String message) {
-        logs.add("[" + LocalDateTime.now() + "] [ERROR] " + message);
-    }
-
-    public void flush() {
-        try (FileWriter writer = new FileWriter(fileName, StandardCharsets.UTF_8, true)) {
-            for (String line : logs) {
-                writer.write(line + "\n");
-            }
-            logs.clear();
+        try {
+            this.writer = new PrintWriter(
+                    new FileWriter(fileName, StandardCharsets.UTF_8, true), true);
         } catch (IOException e) {
-            System.out.println("Ошибка записи лога: " + e.getMessage());
+            throw new RuntimeException("Не удалось создать лог-файл: " + fileName, e);
         }
     }
 
+    public void info(String message) {
+        writer.println(format("INFO", message));
+    }
+
+    public void error(String message) {
+        writer.println(format("ERROR", message));
+    }
+
+    private String format(String level, String message) {
+        return "[" + LocalDateTime.now() + "] [" + level + "] " + message;
+    }
+
+    public void flush() {
+        writer.flush();
+    }
+
+    public void close() {
+        writer.close();
+    }
+
     public void deleteLogFile() {
+        close();
         try {
             Files.deleteIfExists(Paths.get(fileName));
         } catch (IOException e) {
-            System.out.println("Ошибка удаления лог-файла: " + e.getMessage());
+            System.err.println("Не удалось удалить лог-файл: " + e.getMessage());
         }
     }
 }

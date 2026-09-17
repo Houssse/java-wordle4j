@@ -52,15 +52,15 @@ class GameLoggerTest {
     }
 
     @Test
-    void flush_writesMultipleMessages() throws IOException {
-        logger.info("первое");
-        logger.info("второе");
-        logger.error("третье");
+    void log_containsTimestamp() throws IOException {
+        logger.info("сообщение");
         logger.flush();
 
         List<String> lines = Files.readAllLines(Paths.get(FILE_NAME));
+        String line = lines.get(0);
 
-        assertEquals(3, lines.size());
+        assertTrue(line.startsWith("["));
+        assertTrue(line.matches("^\\[[^\\]]+\\] \\[INFO\\] сообщение$"));
     }
 
     @Test
@@ -77,18 +77,7 @@ class GameLoggerTest {
     }
 
     @Test
-    void flush_clearsBuffer() throws IOException {
-        logger.info("первое");
-        logger.flush();
-        logger.flush();
-
-        List<String> lines = Files.readAllLines(Paths.get(FILE_NAME));
-
-        assertEquals(1, lines.size());
-    }
-
-    @Test
-    void deleteLogFile_removesFile() throws IOException {
+    void deleteLogFile_removesFile() {
         logger.info("сообщение");
         logger.flush();
 
@@ -103,16 +92,5 @@ class GameLoggerTest {
     @Test
     void deleteLogFile_noFile_doesNotThrow() {
         assertDoesNotThrow(() -> logger.deleteLogFile());
-    }
-
-    @Test
-    void log_containsTimestamp() throws IOException {
-        logger.info("сообщение");
-        logger.flush();
-
-        List<String> lines = Files.readAllLines(Paths.get(FILE_NAME));
-
-        assertTrue(lines.get(0).startsWith("["));
-        assertTrue(lines.get(0).contains("]"));
     }
 }

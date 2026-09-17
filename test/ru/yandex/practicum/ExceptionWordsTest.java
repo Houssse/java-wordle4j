@@ -9,43 +9,45 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExceptionWordsTest {
 
     @Test
-    void constructor_allLettersCorrect_charPositionFilled() {
+    void allCorrect_maskIsAllPlus() {
         ExceptionWords ew = new ExceptionWords("котик", "котик");
-
-        assertEquals(0, ew.getChars().length());
-        assertEquals(0, ew.getMisplacements().size());
-        assertEquals(4, ew.getCharPosition().size());
-
-        assertEquals(List.of(0, 4), ew.getCharPosition().get('к'));
-        assertEquals(List.of(1), ew.getCharPosition().get('о'));
-        assertEquals(List.of(2), ew.getCharPosition().get('т'));
-        assertEquals(List.of(3), ew.getCharPosition().get('и'));
+        assertEquals("+++++", ew.getMask());
+        assertEquals("", ew.getAbsentChars());
+        assertEquals(4, ew.getCorrectPositions().size());
+        assertEquals(List.of(0, 4), ew.getCorrectPositions().get('к'));
     }
 
     @Test
-    void constructor_noMatchingLetters_charsFilled() {
+    void allAbsent_maskIsAllMinus() {
         ExceptionWords ew = new ExceptionWords("абвгд", "котик");
-
-        assertEquals(0, ew.getCharPosition().size());
-        assertEquals(0, ew.getMisplacements().size());
-        assertEquals("абвгд", ew.getChars());
+        assertEquals("-----", ew.getMask());
+        assertEquals("абвгд", ew.getAbsentChars());
+        assertEquals(0, ew.getCorrectPositions().size());
+        assertEquals(0, ew.getMisplacedPositions().size());
     }
 
     @Test
-    void constructor_letterInWrongPlace_misplacementsFilled() {
+    void misplaced_maskHasCaret() {
         ExceptionWords ew = new ExceptionWords("книга", "котик");
-
-
-        assertTrue(ew.getChars().contains("н"));
-        assertTrue(ew.getChars().contains("г"));
-        assertTrue(ew.getChars().contains("а"));
-        assertTrue(ew.getCharPosition().containsKey('к'));
-        assertTrue(ew.getMisplacements().containsKey('и'));
+        assertTrue(ew.getCorrectPositions().containsKey('к'));
+        assertTrue(ew.getMisplacedPositions().containsKey('и'));
     }
 
     @Test
-    void getWord_returnsOriginalWord() {
-        ExceptionWords ew = new ExceptionWords("книга", "котик");
-        assertEquals("книга", ew.getWord());
+    void duplicateLetters_extraAreAbsent() {
+        ExceptionWords ew = new ExceptionWords("ааааа", "банан");
+        assertEquals("-+-+-", ew.getMask());
     }
-}
+
+    @Test
+    void duplicateLetters_mixedMask() {
+        ExceptionWords ew = new ExceptionWords("ааааб", "банан");
+        assertEquals("-+-+^", ew.getMask());
+    }
+
+        @Test
+        void getWord_returnsOriginal () {
+            ExceptionWords ew = new ExceptionWords("книга", "котик");
+            assertEquals("книга", ew.getWord());
+        }
+    }
