@@ -25,6 +25,7 @@ public class WordleDictionary {
         LinkedHashMap<Character, List<Integer>> misplacements = exceptionWord.getMisplacements();
 
         List<String> filtered = new ArrayList<>();
+        int before = words.size();
 
         for (String word : words) {
             if (word.equals(exceptionWord.getWord())) {

@@ -13,7 +13,9 @@ public class WordleDictionaryLoader {
     private static final String NAME_FILE = "words_ru.txt";
     private static final int WORD_LENGTH = 5;
 
-    public static WordleDictionary loadDictionary() {
+    public static WordleDictionary loadDictionary(GameLogger logger) {
+        logger.info("Загрузка словаря из " + NAME_FILE);
+
         List<String> words = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(
@@ -26,9 +28,11 @@ public class WordleDictionaryLoader {
                 }
             }
         } catch (IOException e) {
+            logger.error("Ошибка чтения файла: " + e.getMessage());
             throw new UncheckedIOException("Ошибка чтения файла", e);
         }
 
+        logger.info("Загружено слов: " + words.size());
         return new WordleDictionary(words);
     }
 }

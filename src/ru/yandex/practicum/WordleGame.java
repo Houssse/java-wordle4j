@@ -13,13 +13,16 @@ public class WordleGame {
     private final WordleDictionary dictionary;
     private boolean finished;
     private final List<ExceptionWords> exceptionWordsList;
+    private final GameLogger logger;
 
-    public WordleGame() {
+    public WordleGame(GameLogger logger) {
+        this.logger = logger;
         this.steps = 0;
-        this.dictionary = WordleDictionaryLoader.loadDictionary();
+        this.dictionary = WordleDictionaryLoader.loadDictionary(logger);
         this.answer = dictionary.randomWord();
         this.finished = false;
         this.exceptionWordsList = new ArrayList<>();
+        logger.info("Игра началась, загадано слово из " + WORD_LENGTH + " букв");
     }
 
     public boolean isFinished() {
@@ -42,6 +45,7 @@ public class WordleGame {
         input = input.toLowerCase().trim().replace("ё", "е");
 
         if (input.length() != WORD_LENGTH) {
+            logger.error("Ошибка ввода: длина " + input.length());
             throw new WordleGameException("Слово должно состоять из 5 букв");
         }
 
@@ -50,21 +54,28 @@ public class WordleGame {
         exceptionWordsList.add(exceptionWord);
         dictionary.filterDictionary(exceptionWord);
 
+        logger.info("Ход " + steps + ": " + input);
+
         if (input.equals(answer)) {
             finished = true;
+            logger.info("Победа! Ответ: " + answer);
             return "Верно, это " + answer;
         }
 
         if (steps == MAX_STEPS) {
             finished = true;
+            logger.info("Проигрыш. Ответ был: " + answer);
             return "У вас закончились ходы. Ответ был " + answer;
         }
 
-        return toChar(exceptionWord.getWord());
+        String mask = toChar(exceptionWord.getWord());
+        logger.info("Маска: " + mask);
+        return mask;
     }
 
     public String giveHint() {
         if (dictionary.isEmpty()) {
+            logger.error("Словарь пуст, подсказок нет");
             throw new WordleGameException("Больше нет подходящих слов");
         }
         return dictionary.randomWord();
