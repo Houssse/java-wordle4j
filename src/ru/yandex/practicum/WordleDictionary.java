@@ -15,6 +15,10 @@ public class WordleDictionary {
         return words.get(random.nextInt(words.size()));
     }
 
+    public boolean isEmpty() {
+        return words.isEmpty();
+    }
+
     public void filterDictionary(ExceptionWords exceptionWord) {
         String forbidden = exceptionWord.getChars();
         LinkedHashMap<Character, List<Integer>> positions = exceptionWord.getCharPosition();
@@ -71,6 +75,7 @@ public class WordleDictionary {
             }
         }
 
-        words = filtered;
+        words.clear();
+        words.addAll(filtered);
     }
 }

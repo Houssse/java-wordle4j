@@ -64,6 +64,9 @@ public class WordleGame {
     }
 
     public String giveHint() {
+        if (dictionary.isEmpty()) {
+            throw new WordleGameException("Больше нет подходящих слов");
+        }
         return dictionary.randomWord();
     }
 
