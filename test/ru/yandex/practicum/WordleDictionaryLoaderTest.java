@@ -39,7 +39,7 @@ class WordleDictionaryLoaderTest {
     }
 
     @Test
-    void loadDictionary_loadsOnlyFiveLetterWords() throws IOException {
+    void loadDictionary_loadsOnlyFiveLetterWords() throws IOException, DictionaryLoadException {
         Path file = writeDictionary("котик", "кот", "книга", "мышка", "ёжик");
 
         WordleDictionary dict = new WordleDictionaryLoader(logger).load(file.toString());
@@ -54,7 +54,7 @@ class WordleDictionaryLoaderTest {
     }
 
     @Test
-    void loadDictionary_normalizesYoToE() throws IOException {
+    void loadDictionary_normalizesYoToE() throws IOException, DictionaryLoadException {
         Path file = writeDictionary("ёжика");
 
         WordleDictionary dict = new WordleDictionaryLoader(logger).load(file.toString());

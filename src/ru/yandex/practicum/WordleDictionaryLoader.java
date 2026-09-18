@@ -21,7 +21,7 @@ public class WordleDictionaryLoader {
         this.logger = logger;
     }
 
-    public WordleDictionary load(String fileName) {
+    public WordleDictionary load(String fileName) throws DictionaryLoadException {
         logger.info("Загрузка словаря из " + fileName);
 
         List<String> words = new ArrayList<>();
