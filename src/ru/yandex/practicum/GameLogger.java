@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-public class GameLogger {
+public class GameLogger implements AutoCloseable {
 
     private final String fileName;
     private final PrintWriter writer;
@@ -17,7 +17,7 @@ public class GameLogger {
         this.fileName = fileName;
         try {
             this.writer = new PrintWriter(
-                    new FileWriter(fileName, StandardCharsets.UTF_8, true), true);
+                    new FileWriter(fileName, StandardCharsets.UTF_8), true);
         } catch (IOException e) {
             throw new RuntimeException("Не удалось создать лог-файл: " + fileName, e);
         }
@@ -39,6 +39,7 @@ public class GameLogger {
         writer.flush();
     }
 
+    @Override
     public void close() {
         writer.close();
     }

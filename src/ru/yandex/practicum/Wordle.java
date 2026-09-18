@@ -10,37 +10,49 @@ public class Wordle {
     private static final String LOG_FILE = "game_log.txt";
 
     public static void main(String[] args) {
-        GameLogger logger = new GameLogger(LOG_FILE);
+        try (GameLogger logger = new GameLogger(LOG_FILE)) {
+            try {
+                logger.info("Программа запущена");
 
-        try {
-            logger.info("Программа запущена");
+                WordleDictionaryLoader loader =
+                        new WordleDictionaryLoader(logger);
 
-            WordleDictionaryLoader loader = new WordleDictionaryLoader(logger);
-            WordleDictionary dictionary = loader.load(DICTIONARY_FILE);
+                WordleDictionary dictionary =
+                        loader.load(DICTIONARY_FILE);
 
-            boolean autoMode = args.length > 0 && "auto".equalsIgnoreCase(args[0]);
+                boolean autoMode =
+                        args.length > 0 && "auto".equalsIgnoreCase(args[0]);
 
-            if (autoMode) {
-                runAutoMode(dictionary, logger);
-            } else {
-                runInteractiveMode(dictionary, logger);
+                if (autoMode) {
+                    runAutoMode(dictionary, logger);
+                } else {
+                    runInteractiveMode(dictionary, logger);
+                }
+
+                logger.info("Программа завершена");
+
+            } catch (Exception e) {
+                logger.error("Непредвиденная ошибка: " + e);
+
+                StringBuilder sb = new StringBuilder();
+
+                for (StackTraceElement el : e.getStackTrace()) {
+                    sb.append("\tat ")
+                            .append(el)
+                            .append(System.lineSeparator());
+                }
+
+                logger.error(sb.toString());
             }
-
-            logger.info("Программа завершена");
-        } catch (Exception e) {
-            logger.error("Непредвиденная ошибка: " + e);
-            StringBuilder sb = new StringBuilder();
-            for (StackTraceElement el : e.getStackTrace()) {
-                sb.append("\tat ").append(el).append(System.lineSeparator());
-            }
-            logger.error(sb.toString());
-        } finally {
-            logger.flush();
         }
     }
 
-    private static void runInteractiveMode(WordleDictionary dictionary, GameLogger logger) {
-        WordleGame game = new WordleGame(dictionary, dictionary.randomWord(), logger);
+    private static void runInteractiveMode(
+            WordleDictionary dictionary,
+            GameLogger logger) {
+
+        WordleGame game =
+                new WordleGame(dictionary, dictionary.randomWord(), logger);
 
         System.out.println("Я загадал слово из 5 букв. У вас 6 попыток.");
         System.out.println("Нажмите Enter без ввода, чтобы получить подсказку.");
@@ -76,10 +88,21 @@ public class Wordle {
         System.out.println("Игра окончена!");
     }
 
-    private static void runAutoMode(WordleDictionary dictionary, GameLogger logger) {
+    private static void runAutoMode(
+            WordleDictionary dictionary,
+            GameLogger logger) {
+
         System.out.println("Режим автопилота. Компьютер играет сам.");
-        WordleGame game = new WordleGame(dictionary, dictionary.randomWord(), logger);
+
+        WordleGame game =
+                new WordleGame(dictionary, dictionary.randomWord(), logger);
+
         boolean win = game.autoPlay();
-        System.out.println(win ? "Автопилот победил!" : "Автопилот проиграл.");
+
+        System.out.println(
+                win
+                        ? "Автопилот победил!"
+                        : "Автопилот проиграл."
+        );
     }
 }
