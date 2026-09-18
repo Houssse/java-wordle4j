@@ -23,7 +23,7 @@ public class ExceptionWords {
     private static String buildMask(String word, String answer) {
         int n = word.length();
         char[] mask = new char[n];
-        int[] remaining = new int[Character.MAX_VALUE];
+        int[] remaining = new int[Character.MAX_VALUE + 1];
 
         for (int i = 0; i < n; i++) {
             remaining[answer.charAt(i)]++;
